@@ -1,10 +1,12 @@
 {
   "name": "@ashluc/retouch",
   "version": "0.1.0",
-  "description": "Portrait retouch editor — face-aware geometry, skin, makeup and heal, entirely in the browser.",
+  "description": "Portrait retouch editor \u2014 face-aware geometry, skin, makeup and heal, entirely in the browser.",
   "type": "module",
   "license": "ISC",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -13,9 +15,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./style.css": "./dist/ashluc-retouch.css"
+    "./style.css": "./dist/styles.css"
   },
-  "sideEffects": ["*.css"],
+  "sideEffects": [
+    "*.css"
+  ],
   "scripts": {
     "dev": "vite --config vite.demo.config.ts",
     "build": "rm -rf dist && tsc -p tsconfig.build.json && vite build",
