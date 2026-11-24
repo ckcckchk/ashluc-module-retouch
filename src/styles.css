@@ -118,7 +118,7 @@
 .rt-frame {
   position: relative;
   width: 100%;
-  max-width: calc(74vh * var(--rt-ar, 0.8));
+  max-width: min(100%, calc(56vh * var(--rt-ar, 0.8)));
   aspect-ratio: var(--rt-ar, 0.8);
   margin-inline: auto;
   border: 1px solid var(--rt-line);
