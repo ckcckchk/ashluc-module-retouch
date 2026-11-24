@@ -404,7 +404,7 @@ export default function App() {
 
       <footer className="foot">
         <span>{t.footNote}</span>
-        <span className="pkg">@ashluc/retouch v0.1.0</span>
+        <span className="pkg">@ashluc/retouch</span>
         <a href={REPO} target="_blank" rel="noreferrer">
           github.com/ckcckchk/ashluc-module-retouch
         </a>

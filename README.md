@@ -64,9 +64,23 @@ brush for blemishes and small objects, rotate and mirror.
 The engine is exported too (`renderRetouch`, `detectLandmarks`, `buildRegions`, `PRESETS`,
 `clampParams`, …) if a host wants to drive the passes itself.
 
+## Layout
+
+The panel answers to the width of the **container the host gives it**, not the viewport:
+
+- **760 px and wider** — preview on the left, control sheet on the right; the sheet scrolls
+  inside the editor instead of growing the page.
+- **Below 760 px** — the preview band pins to the top (frame, compare/rotate/mirror, notice) and
+  only the control sheet scrolls underneath it.
+
+Height is the host's call. Give the editor a definite height (`height: 640px` on its wrapper) and
+it fills that box, with the sheet scrolling internally and the apply bar pinned; leave the height
+auto and it grows like any block, which is what the demo does. On touch pointers every control row
+is at least 44 px and no row clips.
+
 ## Styling
 
-The component ships `dist/ashluc-retouch.css` with `rt-*` classes and reads host colours from
+The component ships `dist/styles.css` with `rt-*` classes and reads host colours from
 `--rt-*` custom properties with sane fallbacks, so it inherits nothing and leaks nothing. Override
 any of them on the root:
 
@@ -77,6 +91,16 @@ any of them on the root:
   --rt-surface: #fff;
   --rt-line: #e5e7eb;
   --rt-radius: 12px;
+}
+```
+
+One layout token: `--rt-frame-max` is the preview's height budget in the stacked layout, which
+defaults to keeping the band under ~44% of the viewport. A host whose page scrolls can spend more
+room on the preview by setting it on the editor's wrapper:
+
+```css
+.editor-card {
+  --rt-frame-max: 56vh;
 }
 ```
 

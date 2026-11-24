@@ -29,6 +29,10 @@
   flex-direction: column;
   min-width: 0;
   max-width: 100%;
+  /* a percentage against an auto-height parent computes to auto, so a host that does NOT bound the
+     height (the demo) is untouched, and a host that wraps it in a definite-height box gets a
+     full-height editor whose sheet scrolls internally */
+  height: 100%;
   /* the layout below answers to the width the HOST gives it, not the viewport: a 600px column
      inside a 1440px page must stack, and a 900px column must go side by side */
   container-type: inline-size;
@@ -98,12 +102,18 @@
   background: var(--rt-canvas);
 }
 
-/* ── body: preview over panel on a phone, side by side from 860px ─────── */
+/* ── body: preview band pinned on top, sheet scrolls under it ─────────── */
 
 .rt-body {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  /* row 1 is the pinned band (frame + tools + notice), row 2 the control panel. On an auto-height
+     grid a 1fr row keeps its content height, so the demo is unchanged; inside a bounded host the
+     panel takes the rest and its sheet scrolls. */
+  grid-template-rows: auto minmax(0, 1fr);
   min-width: 0;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .rt-stage {
@@ -113,12 +123,21 @@
   min-width: 0;
   padding: 14px;
   background: var(--rt-canvas);
+  /* the seam between the pinned band and the sheet below it */
+  border-bottom: 1px solid var(--rt-line);
+  /* Band budget for the stacked layout: 84px is the rest of the band (stage padding, the gap, the
+     tools row and this hairline), so frame + chrome lands on 44vh — the band never eats more than
+     about 44% of the viewport. The frame is width-driven here; height: 100% would be circular in
+     this auto-height row. Overridden side by side, where the row does have a height.
+     A host whose page scrolls (so its editor is never bounded) can raise the preview by setting
+     --rt-frame-max on the editor's wrapper; it wins over this internal budget. */
+  --rt-band-max: calc(44vh - 84px);
 }
 
 .rt-frame {
   position: relative;
   width: 100%;
-  max-width: min(100%, calc(56vh * var(--rt-ar, 0.8)));
+  max-width: min(100%, calc(var(--rt-frame-max, var(--rt-band-max, 56vh)) * var(--rt-ar, 0.8)));
   aspect-ratio: var(--rt-ar, 0.8);
   margin-inline: auto;
   border: 1px solid var(--rt-line);
@@ -219,13 +238,15 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  border-top: 1px solid var(--rt-line);
+  min-height: 0;
   background: var(--rt-surface);
 }
 
 .rt-panel__main {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  /* the tab strip keeps its height, the sheet takes what is left and scrolls inside it */
+  grid-template-rows: auto minmax(0, 1fr);
   min-width: 0;
   flex: 1 1 auto;
   min-height: 0;
@@ -275,7 +296,11 @@
   flex-direction: column;
   gap: 16px;
   min-width: 0;
+  min-height: 0;
   padding: 14px 16px 18px;
+  /* the sheet is the one scroll region: the preview and the tabs stay put while it moves */
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
 }
 
 .rt-sheet:focus-visible {
@@ -598,16 +623,42 @@ button.rt-field__value[data-on]:hover:not(:disabled) {
   flex: 1 1 128px;
 }
 
+/* ── phone: the seven tabs must fit the column rather than scroll sideways ─ */
+
+@container rt (max-width: 359px) {
+  .rt-tab {
+    padding: 0 6px;
+  }
+}
+
 /* ── desktop: preview left, rail-style panel right ────────────────────── */
 
 @container rt (min-width: 760px) {
   .rt-body {
     grid-template-columns: minmax(0, 1fr) 360px;
+    grid-template-rows: minmax(0, 1fr);
     align-items: stretch;
+    min-height: 0;
   }
 
   .rt-stage {
+    display: grid;
+    /* the frame takes the free height, the tools row and the notice line sit under it */
+    grid-template-rows: minmax(0, 1fr) auto auto;
+    align-items: center;
     padding: 18px;
+    border-bottom: 0;
+    --rt-band-max: 64vh;
+  }
+
+  /* Height-driven here, so the frame always fits the row it is given: 100% of a definite row, the
+     column width (or the vh budget) when the host leaves the height auto. aspect-ratio keeps the
+     picture unsquashed in all three cases — a width-driven box clamped by max-height would distort
+     it. */
+  .rt-frame {
+    height: 100%;
+    width: auto;
+    max-height: var(--rt-frame-max, var(--rt-band-max, 56vh));
   }
 
   .rt-panel {
@@ -618,6 +669,7 @@ button.rt-field__value[data-on]:hover:not(:disabled) {
 
   .rt-panel__main {
     grid-template-columns: 84px minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
   }
 
   .rt-tabs {
@@ -647,8 +699,6 @@ button.rt-field__value[data-on]:hover:not(:disabled) {
 
   .rt-sheet {
     padding: 16px 16px 20px;
-    overflow-y: auto;
-    overscroll-behavior-y: contain;
   }
 
   .rt-btn,
@@ -673,14 +723,19 @@ button.rt-field__value[data-on]:hover:not(:disabled) {
     min-height: 44px;
   }
 
+  /* a slider row is a control row too — the desktop block trims it to 40px */
+  .rt-field {
+    min-height: 44px;
+  }
+
   .rt-preset {
-    height: 30px;
-    line-height: 28px;
+    height: 44px;
+    line-height: 42px;
   }
 
   .rt-swatch {
-    width: 34px;
-    height: 34px;
+    width: 44px;
+    height: 44px;
   }
 }
 
