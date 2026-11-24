@@ -68,10 +68,12 @@ The engine is exported too (`renderRetouch`, `detectLandmarks`, `buildRegions`, 
 
 The panel answers to the width of the **container the host gives it**, not the viewport:
 
-- **760 px and wider** — preview on the left, control sheet on the right; the sheet scrolls
-  inside the editor instead of growing the page.
-- **Below 760 px** — the preview band pins to the top (frame, compare/rotate/mirror, notice) and
-  only the control sheet scrolls underneath it.
+- **660 px and wider** — preview on the left, control sheet on the right (the panel takes
+  `minmax(300px, min(360px, 45%))`); the sheet scrolls inside the editor instead of growing the
+  page.
+- **Below 660 px** — the preview band pins to the top (frame, compare/rotate/mirror, notice) and
+  only the control sheet scrolls underneath it. The band is budgeted to ~44% of the viewport, and
+  to ~38% under a 480 px container so a phone keeps more than half the screen for the controls.
 
 Height is the host's call. Give the editor a definite height (`height: 640px` on its wrapper) and
 it fills that box, with the sheet scrolling internally and the apply bar pinned; leave the height

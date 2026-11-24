@@ -71,7 +71,7 @@ the un-warped frame and receives regions in un-warped coordinates.
 | Local (eye brighten, eye bag, teeth) | **0.1.0** |
 | Heal brush (blemish / object removal) | **0.1.0** |
 | Five presets, compare-while-held, rotate/flip, reset | **0.1.0** |
-| Layout — answers to the host's container width: side by side (preview left, scrolling sheet right) from 760 px, a pinned preview band with only the sheet scrolling below it; `height: 100%` on the root so a definite-height wrapper gets a full-height editor while an auto-height one grows as before; the stacked preview budget is `--rt-frame-max` (default `calc(44vh - 84px)`, 64vh side by side) so the band stays under ~44% of the viewport; every control row ≥ 44 px under `pointer: coarse` | **0.1.0** |
+| Layout — answers to the host's container width: side by side (preview left, scrolling sheet right) from 660 px with the panel at `minmax(300px, min(360px, 45%))`, a pinned preview band with only the sheet scrolling below it otherwise; `height: 100%` on the root so a definite-height wrapper gets a full-height editor while an auto-height one grows as before; the band budget is `--rt-frame-max` (default `calc(44vh - 84px)`, `calc(38vh - 84px)` under a 480 px container, `calc(64vh - 84px)` side by side) so the band stays under ~44% of the viewport; the frame is width-driven everywhere so `aspect-ratio` can never be violated; every control row ≥ 44 px under `pointer: coarse` | **0.1.0** |
 | Demo app (`npm run dev`) | **0.1.0** |
 
 ## Delegating it

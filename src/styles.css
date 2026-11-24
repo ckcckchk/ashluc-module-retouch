@@ -127,8 +127,7 @@
   border-bottom: 1px solid var(--rt-line);
   /* Band budget for the stacked layout: 84px is the rest of the band (stage padding, the gap, the
      tools row and this hairline), so frame + chrome lands on 44vh — the band never eats more than
-     about 44% of the viewport. The frame is width-driven here; height: 100% would be circular in
-     this auto-height row. Overridden side by side, where the row does have a height.
+     about 44% of the viewport. Side by side the same 84px buys a 64vh frame instead.
      A host whose page scrolls (so its editor is never bounded) can raise the preview by setting
      --rt-frame-max on the editor's wrapper; it wins over this internal budget. */
   --rt-band-max: calc(44vh - 84px);
@@ -623,6 +622,14 @@ button.rt-field__value[data-on]:hover:not(:disabled) {
   flex: 1 1 128px;
 }
 
+/* ── phone: a smaller preview band leaves the controls more than half ───── */
+
+@container rt (max-width: 479px) {
+  .rt-stage {
+    --rt-band-max: calc(38vh - 84px);
+  }
+}
+
 /* ── phone: the seven tabs must fit the column rather than scroll sideways ─ */
 
 @container rt (max-width: 359px) {
@@ -633,9 +640,11 @@ button.rt-field__value[data-on]:hover:not(:disabled) {
 
 /* ── desktop: preview left, rail-style panel right ────────────────────── */
 
-@container rt (min-width: 760px) {
+/* 660px, not 760: the host hands this editor a 692px column at a 1024 window and 661px at 768,
+   where the stacked band (44vh of the viewport) left the control sheet one group tall. */
+@container rt (min-width: 660px) {
   .rt-body {
-    grid-template-columns: minmax(0, 1fr) 360px;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, min(360px, 45%));
     grid-template-rows: minmax(0, 1fr);
     align-items: stretch;
     min-height: 0;
@@ -643,22 +652,16 @@ button.rt-field__value[data-on]:hover:not(:disabled) {
 
   .rt-stage {
     display: grid;
-    /* the frame takes the free height, the tools row and the notice line sit under it */
-    grid-template-rows: minmax(0, 1fr) auto auto;
-    align-items: center;
+    /* the frame hugs its own height, the tools row and the notice line sit under it, and any slack
+       in a tall column stays at the bottom rather than stretching the picture */
+    grid-template-rows: auto auto auto;
+    align-content: center;
+    justify-items: center;
     padding: 18px;
     border-bottom: 0;
-    --rt-band-max: 64vh;
-  }
-
-  /* Height-driven here, so the frame always fits the row it is given: 100% of a definite row, the
-     column width (or the vh budget) when the host leaves the height auto. aspect-ratio keeps the
-     picture unsquashed in all three cases — a width-driven box clamped by max-height would distort
-     it. */
-  .rt-frame {
-    height: 100%;
-    width: auto;
-    max-height: var(--rt-frame-max, var(--rt-band-max, 56vh));
+    /* 84px is the rest of the band (padding, the gap, the tools row), so frame + chrome stays
+       inside the bounded body at a short laptop viewport instead of clipping the tools row. */
+    --rt-band-max: calc(64vh - 84px);
   }
 
   .rt-panel {
